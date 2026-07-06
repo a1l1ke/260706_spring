@@ -1,5 +1,9 @@
 package org.example.step4;
 
+import org.example.step4.application.AService;
+import org.example.step4.application.BService;
+import org.example.step4.application.CService;
+import org.example.step4.application.DService;
 import org.example.step4.config.AppConfig;
 import org.example.step4.domain.Book;
 import org.example.step4.domain.BookService;
@@ -27,5 +31,27 @@ public class Main {
         System.out.println("book = " + book);
         System.out.println("registeredBook = " + registeredBook);
 //        bookService2.register(book);
+
+        // 생성자 주입을 쓸 경우의 순환 참조
+        // UnsatisfiedDependencyException
+        try {
+            AService aService = applicationContext.getBean(AService.class);
+            System.out.println("aService = " + aService);
+            BService bService = applicationContext.getBean(BService.class);
+            System.out.println("bService = " + bService);
+        } catch (Exception e) {
+            System.out.println(e.getMessage()); // 적절한 예외 처리 가능
+        }
+        // 필드, 세터 주입을 쓸 경우의 순환 참조
+        try {
+            CService cService = applicationContext.getBean(CService.class);
+            System.out.println("cService = " + cService);
+            DService dService = applicationContext.getBean(DService.class);
+            System.out.println("dService = " + dService);
+            cService.hello();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            // critical한 stackoverflow 에러가 뜨면서 더 이상 진행할 수 X.
+        }
     }
 }
